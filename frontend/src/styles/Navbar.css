@@ -1,0 +1,86 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 2rem;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 60px;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1a237e;
+  text-decoration: none;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+}
+
+/* Unified styling for nav links and buttons */
+.nav-item {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  margin: 0 1rem;
+  transition: color 0.3s ease;
+  position: relative;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Hover underline effect */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #1a237e;
+  transition: width 0.3s ease;
+}
+
+.nav-item.page-link:hover::after {
+  width: 100%;
+}
+/* Prevent hover underline for dropdown/profile items */
+.nav-item.no-hover-underline::after {
+  display: none;
+}
+
+
+@media (max-width: 1024px) {
+  .nav-right {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+}
+
+.nav-item.page-link.active::after {
+  width: 100%;
+}
