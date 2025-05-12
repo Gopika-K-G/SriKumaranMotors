@@ -1,138 +1,62 @@
+// src/components/Navbar.jsx
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext, useRef } from 'react';
-import { useScroll } from '../context/ScrollContext';
 import { AuthContext } from '../context/AuthContext';
 import "../styles/Navbar.css";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setScrollTarget } = useScroll();
   const { user, logout } = useContext(AuthContext);
-
-  const [currentSection, setCurrentSection] = useState('home');
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef(null); // Used to detect outside clicks
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (location.pathname !== '/') return;
-
-      const aboutEl = document.getElementById('about');
-      const scrollY = window.scrollY;
-      const buffer = 100;
-
-      if (aboutEl) {
-        const aboutTop = aboutEl.offsetTop - buffer;
-        const aboutBottom = aboutTop + aboutEl.offsetHeight;
-
-        if (scrollY >= aboutTop && scrollY < aboutBottom) {
-          setCurrentSection('about');
-        } else {
-          setCurrentSection('home');
-        }
-      }
-    };
-
-    if (location.pathname === '/') {
-      window.addEventListener('scroll', handleScroll);
-      handleScroll();
-    }
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [location]);
+  const dropdownRef = useRef(null);
 
   // Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const onClick = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
       }
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
   }, []);
 
-  const handleAboutClick = () => {
-    if (location.pathname !== '/') {
-      setScrollTarget('about');
-      navigate('/');
-    } else {
-      const aboutEl = document.getElementById('about');
-      if (aboutEl) {
-        aboutEl.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
-  const handleHomeClick = () => {
-    if (location.pathname !== '/') {
-      setScrollTarget('home');
-      navigate('/');
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setShowDropdown(false);
   };
 
   return (
     <nav className="navbar">
       <div className="nav-left">
-        <Link to="/" className="nav-brand">
-          <span className="brand-icon">🌱</span>
-          Sri Kumaran Motors
-        </Link>
+        <Link to="/" className="nav-brand">🌱 Sri Kumaran Motors</Link>
       </div>
 
       <div className="nav-right">
-        <Link
-          to="/"
-          className={`nav-item page-link ${location.pathname === '/' && currentSection === 'home' ? 'active' : ''}`}
-          onClick={handleHomeClick}
-        >
-          Home
-        </Link>
-
-        <Link
-          to="/"
-          className={`nav-item page-link ${location.pathname === '/' && currentSection === 'about' ? 'active' : ''}`}
-          onClick={handleAboutClick}
-        >
-          About
-        </Link>
-
-        <Link
-          to="/products"
-          className={`nav-item page-link ${location.pathname === '/products' ? 'active' : ''}`}
-        >
-          Products
-        </Link>
-
-        {!user ? (
-          <Link
-            to="/login"
-            className={`nav-item page-link ${location.pathname === '/login' ? 'active' : ''}`}
-          >
-            Sign in/up
-          </Link>
-        ) : (
+        {!user && (
           <>
-            <Link
-              to="/cart"
-              className={`nav-item page-link ${location.pathname === '/cart' ? 'active' : ''}`}
-            >
-              Cart
-            </Link>
+            <Link to="/"       className="nav-item page-link">Home</Link>
+            <Link to="/"       className="nav-item page-link">About</Link>
+            <Link to="/products" className="nav-item page-link">Products</Link>
+            <Link to="/login"  className="nav-item page-link">Sign in/up</Link>
+          </>
+        )}
 
-            {/* Profile Dropdown */}
+        {user && user.role === 'user' && (
+          <>
+            <Link to="/"         className="nav-item page-link">Home</Link>
+            <Link to="/"         className="nav-item page-link">About</Link>
+            <Link to="/products" className="nav-item page-link">Products</Link>
+            <Link to="/cart"     className="nav-item page-link">Cart</Link>
+            <Link to="/favourites" className="nav-item page-link">Favourites</Link>
+
+            {/* Profile Dropdown (original design) */}
             <div
               className="nav-item no-hover-underline"
               onClick={() => setShowDropdown(!showDropdown)}
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', cursor: 'pointer' }}
             >
               Profile ▾
               {showDropdown && (
@@ -152,18 +76,19 @@ function Navbar() {
                   <Link
                     to="/profile"
                     className="nav-item no-hover-underline"
-                    style={{ display: 'block', padding: '0.5rem 1rem' }}
+                    style={{
+                      display: 'block',
+                      padding: '0.5rem 1rem',
+                      textDecoration: 'none',
+                      color: '#333',
+                    }}
                     onClick={() => setShowDropdown(false)}
                   >
                     View Profile
                   </Link>
                   <button
                     className="nav-item no-hover-underline"
-                    onClick={() => {
-                      logout();
-                      setShowDropdown(false);
-                      navigate('/'); // or navigate('/login');
-                    }}
+                    onClick={handleLogout}
                     style={{
                       display: 'block',
                       width: '100%',
@@ -172,6 +97,7 @@ function Navbar() {
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
+                      color: '#333',
                     }}
                   >
                     Logout
@@ -179,6 +105,21 @@ function Navbar() {
                 </div>
               )}
             </div>
+          </>
+        )}
+
+        {user && user.role === 'admin' && (
+          <>
+            <Link to="/admin/users"  className="nav-item page-link">User Details</Link>
+            <Link to="/admin/orders" className="nav-item page-link">Order Details</Link>
+            <Link to="/admin/stock"  className="nav-item page-link">Stock Management</Link>
+            <button
+              className="nav-item nav-logout"
+              onClick={handleLogout}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#333', fontSize:'0.95rem', margin:'0 1rem' }}
+            >
+              Logout
+            </button>
           </>
         )}
       </div>

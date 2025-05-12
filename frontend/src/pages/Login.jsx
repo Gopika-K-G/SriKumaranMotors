@@ -30,9 +30,17 @@ function Signin() {
       const data = await res.json();
 
       if (res.ok) {
-        login(data.token, data.user); // 👈 update AuthContext
+        login(data.token, data.user); // ✅ AuthContext login
+
+         localStorage.setItem('userId', data.user.id);
         alert('Login successful!');
-        navigate('/'); // 👈 go to homepage or dashboard
+
+        // ✅ Redirect based on user role
+        if (data.user.role === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
         alert(data.message || 'Login failed');
       }
@@ -47,7 +55,7 @@ function Signin() {
       <div className="signin-card">
         <div className="signin-left">
           <img
-            src="/assets/running.jpg"
+            src="https://t3.ftcdn.net/jpg/02/86/02/22/360_F_286022279_zTU2R0YbUwWRS9esGbtB2dUuEnWaZ3pO.jpg"
             alt="Runner"
             className="signin-image"
           />

@@ -13,7 +13,7 @@ const HeroSection = () => {
     >
       <div className="hero-content">
         <h1>
-          Welcome to <span style={{ color: '#fbbf24' }}>Srikumaran Motors</span>
+          Welcome to <span style={{ color: '#fbbf24' }}>Sri Kumaran Motors</span>
         </h1>
         <p>We provide quality auto parts and services.</p>
         <button onClick={() => navigate('/products')}>

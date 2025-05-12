@@ -41,6 +41,7 @@ body, html, #root {
   
     .hero-content p {
       font-size: 16px;
+      color: black;
     }
   }
   

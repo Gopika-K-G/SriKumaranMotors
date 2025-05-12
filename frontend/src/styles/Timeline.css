@@ -1,0 +1,35 @@
+.timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0 2rem;
+}
+.timeline-step {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+.circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ddd;
+  z-index: 1;
+}
+.circle.done {
+  background: #007bff;
+}
+.bar {
+  flex: 1;
+  height: 4px;
+  background: #ddd;
+  margin: 0 -2px;
+}
+.label {
+  margin-left: 0.5rem;
+  color: #666;
+}
+.label.done {
+  color: #007bff;
+}

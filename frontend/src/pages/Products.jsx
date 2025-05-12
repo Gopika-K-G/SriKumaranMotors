@@ -1,69 +1,165 @@
-import React from "react";
-
-// Sample product data
-const products = [
-  { id: 1, name: "Yoga Mat", price: "$20", description: "Comfortable and non-slip yoga mat." },
-  { id: 2, name: "Dumbbells (Set of 2)", price: "$35", description: "Adjustable weight dumbbells." },
-  { id: 3, name: "Fitness Tracker Watch", price: "$50", description: "Tracks your steps, heart rate, and calories." },
-  { id: 4, name: "Resistance Bands", price: "$15", description: "Set of 5 bands with different resistance levels." },
-];
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import '../styles/products.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem('token');
+  const isLoggedIn = !!token;
+
+  const authHeader = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  useEffect(() => {
+    // Fetch all products
+    axios.get('/api/products')
+      .then(res => setProducts(res.data))
+      .catch(err => console.error(err));
+
+    if (isLoggedIn) {
+      // Fetch user's favorites
+      axios.get('/api/favourites', authHeader)
+        .then(res => setFavorites(res.data.favorites))
+        .catch(err => console.error(err));
+
+      // Fetch user's cart
+      axios.get('/api/cart', authHeader)
+        .then(res => {
+          setCartItems(res.data.cart);
+          const initialQuantities = {};
+          res.data.cart.forEach(item => {
+            initialQuantities[item.product] = item.quantity;
+          });
+          setQuantities(initialQuantities);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [isLoggedIn]);
+
+  const isInCart = (productId) => {
+    return cartItems.some(item => item.product === productId);
+  };
+
+  const getCartItemQuantity = (productId) => {
+    const item = cartItems.find(item => item.product === productId);
+    return item ? item.quantity : 0;
+  };
+
+  const toggleFavorite = (productId) => {
+    if (!isLoggedIn) {
+      alert("Please log in to manage favorites.");
+      return navigate('/login');
+    }
+
+    const isFav = favorites.includes(productId);
+    const request = isFav
+      ? axios.delete(`/api/favourites/${productId}`, authHeader)
+      : axios.post('/api/favourites', { productId }, authHeader);
+
+    request
+      .then(() => {
+        setFavorites((prev) =>
+          isFav ? prev.filter(id => id !== productId) : [...prev, productId]
+        );
+      })
+      .catch(err => console.error("Favorite toggle error:", err));
+  };
+
+  const handleAddToCart = (productId) => {
+    if (!isLoggedIn) {
+      alert("Please log in to add to cart.");
+      return navigate('/login');
+    }
+
+    const quantity = quantities[productId] || 1;
+
+    axios.post('/api/cart', { productId, quantity }, authHeader)
+      .then(() => {
+        const isExisting = isInCart(productId);
+        if (!isExisting) {
+          setCartItems(prev => [...prev, { product: productId, quantity }]);
+        } else {
+          // update quantity
+          setCartItems(prev =>
+            prev.map(item =>
+              item.product === productId ? { ...item, quantity } : item
+            )
+          );
+        }
+        alert(isExisting ? "Cart updated!" : "Added to cart!");
+      })
+      .catch(err => console.error("Add/update cart error:", err));
+  };
+
+  const handleQtyChange = (productId, e) => {
+    const value = parseInt(e.target.value, 10);
+    if (value > 0) {
+      setQuantities(prev => ({ ...prev, [productId]: value }));
+    }
+  };
+
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Our Products</h1>
-      <div style={styles.productList}>
-        {products.map((product) => (
-          <div key={product.id} style={styles.productCard}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p style={styles.price}>{product.price}</p>
-            <button style={styles.button}>Add to Cart</button>
+    <div className="product-grid">
+      {products.map((product) => {
+        const isFav = favorites.includes(product._id);
+        const isCarted = isInCart(product._id);
+        const currentQty = quantities[product._id] || 1;
+        const cartQty = getCartItemQuantity(product._id);
+        const isQtyChanged = currentQty !== cartQty;
+
+        return (
+          <div className="product-card" key={product._id}>
+            <div className="image-wrapper">
+              <img src={product.image} alt={product.name} />
+              <div
+                className="fav-icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(product._id);
+                }}
+              >
+                {isFav ? <FaHeart color="red" /> : <FaRegHeart color="gray" />}
+              </div>
+            </div>
+
+            <h3>{product.name}</h3>
+            <p><strong>Price:</strong> ₹{product.price}</p>
+            <p style={{ color: product.stockQuantity > 0 ? 'green' : 'red' }}>
+              {product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}
+            </p>
+            <p>{product.description.slice(0, 60)}...</p>
+
+            <p><strong>Quantity:</strong></p>
+            <input
+              type="number"
+              min="1"
+              value={currentQty}
+              onChange={(e) => handleQtyChange(product._id, e)}
+            />
+
+            <button
+              onClick={() => handleAddToCart(product._id)}
+              disabled={product.stockQuantity === 0}
+            >
+              {isCarted
+                ? (isQtyChanged ? 'Update Cart' : 'Added to Cart')
+                : 'Add to Cart'}
+            </button>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
-};
-
-// Inline styles
-const styles = {
-  container: {
-    maxWidth: "900px",
-    margin: "0 auto",
-    padding: "20px",
-    textAlign: "center",
-  },
-  heading: {
-    fontSize: "2rem",
-    marginBottom: "20px",
-  },
-  productList: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "20px",
-  },
-  productCard: {
-    padding: "15px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    textAlign: "center",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  },
-  price: {
-    fontSize: "1.2rem",
-    fontWeight: "bold",
-    color: "#007bff",
-  },
-  button: {
-    padding: "10px",
-    fontSize: "1rem",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    borderRadius: "5px",
-  },
 };
 
 export default Products;

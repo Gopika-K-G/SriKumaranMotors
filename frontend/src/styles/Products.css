@@ -1,0 +1,113 @@
+/* products.css */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding: 120px 2rem 2rem; /* top padding accounts for fixed navbar */
+  }
+  
+  .product-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  
+  .product-card h3 {
+    font-size: 1.2rem;
+    color: #1a237e;
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-card p {
+    font-size: 0.9rem;
+    color: #444;
+    margin: 0.3rem 0;
+  }
+  
+  .product-card input {
+    width: 60px;
+    margin: 0.5rem 0;
+    padding: 0.2rem;
+    text-align: center;
+  }
+  
+  .product-card button {
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  
+  .product-card button:hover {
+    background: #3949ab;
+  }
+  @media (max-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+    
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .image-wrapper img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .fav-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    background: white;
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+  
+  .fav-icon:hover {
+    transform: scale(1.1);
+  }
+  
