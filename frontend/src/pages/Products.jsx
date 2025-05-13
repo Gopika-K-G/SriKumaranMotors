@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/products.css';
+import '../styles/Products.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import BASE_URL from '../api';
 
