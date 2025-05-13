@@ -5,6 +5,7 @@ import HeroSection from '../components/HeroSection';
 import About from './About';
 import Footer from '../components/Footer';
 
+
 const Home = () => {
   const { scrollTarget, setScrollTarget, setCurrentSection } = useScroll();
   const location = useLocation();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Timeline from '../components/Timeline';
 import axios from 'axios';
 import '../styles/Profile.css';
+import BASE_URL from '../api';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('personal');
@@ -10,12 +11,12 @@ export default function Profile() {
 
   useEffect(() => {
     // Fetch user details
-    axios.get('/api/auth/me')
+    axios.get(`${BASE_URL}/api/auth/me`)
       .then(res => setUser(res.data))
       .catch(err => console.error(err));
 
     // Fetch user orders
-    axios.get(`/api/orders?userId=${localStorage.getItem('userId')}`)
+    axios.get(`${BASE_URL}/api/orders?userId=${localStorage.getItem('userId')}`)
       .then(res => setOrders(res.data))
       .catch(err => console.error(err));
   }, []);

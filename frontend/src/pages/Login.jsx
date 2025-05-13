@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Signin.css';
+import BASE_URL from '../api';
 
 function Signin() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ function Signin() {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

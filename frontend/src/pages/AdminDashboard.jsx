@@ -7,6 +7,9 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 
+import BASE_URL from '../api';
+
+
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#d0ed57', '#a4de6c'];
 
 export default function AdminDashboard() {
@@ -25,7 +28,8 @@ export default function AdminDashboard() {
     const headers = { Authorization: `Bearer ${token}` };
 
    // 1️⃣ User growth (users per month)
-    axios.get('/api/admin/stats/users', { headers })
+    axios.get(`${BASE_URL}/api/admin/stats/users`, { headers })
+
       .then(res => {
         console.log('User stats:', res.data);  // ✅ now it will print
         setUserStats(res.data);
@@ -33,7 +37,7 @@ export default function AdminDashboard() {
       .catch(console.error);
 
     // 2️⃣ Monthly sales (orders per month)
-    axios.get('/api/admin/stats/orders', { headers })
+    axios.get(`${BASE_URL}/api/admin/stats/orders`, { headers })
       .then(res => {
         console.log('Order stats:', res.data);  // ✅ now it will print
         setOrderStats(res.data);
@@ -41,12 +45,13 @@ export default function AdminDashboard() {
       .catch(console.error);
 
     // 3️⃣ Category distribution (number of products per category)
-    axios.get('/api/admin/stats/products/categories', { headers })
+    axios.get(`${BASE_URL}/api/admin/stats/products/categories`, { headers })
+
       .then(res => setCategoryStats(res.data))
       .catch(console.error);
 
     // 4️⃣ Stock levels (products low / out of stock)
-    axios.get('/api/admin/stats/products/stock', { headers })
+    axios.get(`${BASE_URL}/api/admin/stats/products/stock`, { headers })
       .then(res => setStockStats(res.data))
       .catch(console.error);
   }, [token]);

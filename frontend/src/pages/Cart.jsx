@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css'; // Create your CSS file accordingly
+import BASE_URL from '../api';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -16,7 +17,7 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    axios.get('/api/cart', authHeader)
+    axios.get(`${BASE_URL}/api/cart`, authHeader)
       .then(res => {
         setCartItems(res.data.cart);
         const initialQuantities = {};
@@ -37,13 +38,13 @@ const Cart = () => {
 
   const updateQuantity = (productId) => {
     const quantity = quantities[productId];
-    axios.post('/api/cart', { productId, quantity }, authHeader)
+    axios.post(`${BASE_URL}/api/cart`, { productId, quantity }, authHeader)
       .then(() => alert('Cart updated!'))
       .catch(err => console.error('Update error:', err));
   };
 
   const removeFromCart = (productId) => {
-    axios.delete(`/api/cart/${productId}`, authHeader)
+    axios.delete(`${BASE_URL}/api/cart/${productId}`, authHeader)
       .then(() => {
         setCartItems(prev => prev.filter(item => item.productId._id !== productId));
         const newQuantities = { ...quantities };

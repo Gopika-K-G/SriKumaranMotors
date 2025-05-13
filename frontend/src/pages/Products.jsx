@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/products.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import BASE_URL from '../api';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -22,18 +23,18 @@ const Products = () => {
 
   useEffect(() => {
     // Fetch all products
-    axios.get('/api/products')
+    axios.get(`${BASE_URL}/api/products`)
       .then(res => setProducts(res.data))
       .catch(err => console.error(err));
 
     if (isLoggedIn) {
       // Fetch user's favorites
-      axios.get('/api/favourites', authHeader)
+      axios.get(`${BASE_URL}/api/favourites`, authHeader)
         .then(res => setFavorites(res.data.favorites))
         .catch(err => console.error(err));
 
       // Fetch user's cart
-      axios.get('/api/cart', authHeader)
+      axios.get(`${BASE_URL}/api/cart`, authHeader)
         .then(res => {
           setCartItems(res.data.cart);
           const initialQuantities = {};
@@ -63,8 +64,8 @@ const Products = () => {
 
     const isFav = favorites.includes(productId);
     const request = isFav
-      ? axios.delete(`/api/favourites/${productId}`, authHeader)
-      : axios.post('/api/favourites', { productId }, authHeader);
+      ? axios.delete(`${BASE_URL}/api/favourites/${productId}`, authHeader)
+      : axios.post(`${BASE_URL}/api/favourites`, { productId }, authHeader);
 
     request
       .then(() => {
@@ -83,7 +84,7 @@ const Products = () => {
 
     const quantity = quantities[productId] || 1;
 
-    axios.post('/api/cart', { productId, quantity }, authHeader)
+    axios.post(`${BASE_URL}/api/cart`, { productId, quantity }, authHeader)
       .then(() => {
         const isExisting = isInCart(productId);
         if (!isExisting) {

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
+import BASE_URL from '../api';
 
 const CARD_OPTIONS = {
   style: {
@@ -41,7 +42,7 @@ const PaymentPage = () => {
   // Fetch user data
   useEffect(() => {
     if (userId) {
-      axios.get(`/api/users/${userId}`)
+      axios.get(`${BASE_URL}/api/users/${userId}`)
         .then(res => setUser(res.data))
         .catch(err => console.error('Error fetching user data:', err));
     }
@@ -50,7 +51,7 @@ const PaymentPage = () => {
   // Create payment intent
   useEffect(() => {
     if (grandTotal) {
-      axios.post('/api/payment/create-payment-intent', { amount: grandTotal })
+      axios.post(`${BASE_URL}/api/payment/create-payment-intent`, { amount: grandTotal })
         .then(res => setClientSecret(res.data.clientSecret))
         .catch(err => console.error('Stripe Payment Intent Error:', err));
     }
@@ -117,7 +118,7 @@ const PaymentPage = () => {
         date: new Date(),
       };
 
-      await axios.post('/api/orders/create', orderData);
+      await axios.post(`${BASE_URL}/api/orders/create`, orderData);
     } catch (error) {
       console.error('Error storing order details:', error);
     }

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import html2pdf from 'html2pdf.js';
 import '../styles//PaymentSuccess.css';
+import BASE_URL from '../api';
 
 export default function PaymentSuccess() {
   const location = useLocation();
@@ -14,10 +15,10 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     if (paymentId) {
-      axios.get(`/api/orders/${paymentId}`)
+      axios.get(`${BASE_URL}/api/orders/${paymentId}`)
         .then(res => {
           setOrderDetails(res.data);
-          return axios.get(`/api/users/${res.data.userId}`);
+          return axios.get(`${BASE_URL}/api/users/${res.data.userId}`);
         })
         .then(res => setUserDetails(res.data))
         .catch(err => console.error('Error:', err));

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import BASE_URL from '../api';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    axios.get(`/api/products/${id}`)
+    axios.get(`${BASE_URL}/api/products/${id}`)
       .then(res => setProduct(res.data))
       .catch(err => console.error('Error loading product:', err));
   }, [id]);

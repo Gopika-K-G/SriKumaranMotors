@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import BASE_URL from '../api';
 
 const BillPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -19,12 +20,12 @@ const BillPage = () => {
 
   useEffect(() => {
     // Fetch cart items
-    axios.get('/api/cart', authHeader)
+    axios.get(`${BASE_URL}/api/cart`, authHeader)
       .then(res => setCartItems(res.data.cart))
       .catch(err => console.error('Error fetching cart:', err));
 
     // Fetch user details
-    axios.get('/api/auth/user', authHeader)
+      axios.get(`${BASE_URL}/api/auth/user`, authHeader)
       .then(res => setUser(res.data))
       .catch(err => console.error('Error fetching user:', err));
   }, []);

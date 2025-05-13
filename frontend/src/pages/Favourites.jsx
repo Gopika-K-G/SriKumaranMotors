@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/Favourites.css';
+import BASE_URL from '../api';
 
 const Favourites = () => {
   const [favouriteProducts, setFavouriteProducts] = useState([]);
@@ -17,7 +18,7 @@ const Favourites = () => {
     const fetchFavourites = async () => {
       try {
         // Step 1: Get favourite product IDs
-        const res = await axios.get('/api/favourites', authHeader);
+        const res = await axios.get(`${BASE_URL}/api/favourites`, authHeader);
         const favIds = res.data.favorites; // still just array of IDs
 
         if (favIds.length === 0) {
@@ -27,7 +28,7 @@ const Favourites = () => {
         }
 
         // Step 2: Fetch full product details (assuming backend has a product API that supports multiple IDs)
-        const productsRes = await axios.post('/api/products/byIds', { ids: favIds }, authHeader);
+        const productsRes = await axios.post(`${BASE_URL}/api/products/byIds`, { ids: favIds }, authHeader);
         setFavouriteProducts(productsRes.data.products);
       } catch (err) {
         console.error('Error fetching favourites:', err);
@@ -41,7 +42,7 @@ const Favourites = () => {
 
   const removeFromFavourites = async (productId) => {
     try {
-      await axios.delete(`/api/favourites/${productId}`, authHeader);
+      await axios.delete(`${BASE_URL}/api/favourites/${productId}`, authHeader);
       setFavouriteProducts(prev => prev.filter(item => item._id !== productId));
     } catch (err) {
       console.error('Remove error:', err);
