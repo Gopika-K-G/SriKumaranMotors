@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import '../styles/home.css'; // Make sure the path is correct
+import '../styles/Home.css'; // Make sure the path is correct
 
 const HeroSection = () => {
   const navigate = useNavigate();
