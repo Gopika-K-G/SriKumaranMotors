@@ -1,21 +1,24 @@
-// server/controllers/stripeController.js
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Razorpay = require("razorpay");
 
-const createPaymentIntent = async (req, res) => {
-  const { amount } = req.body; // Amount in rupees
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
+
+exports.createRazorpayOrder = async (req, res) => {
+  const { amount } = req.body;
 
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount * 100, // Convert to paisa
-      currency: 'inr',
-      payment_method_types: ['card'],
-    });
+    const options = {
+      amount: Math.round(amount * 100), // amount in paisa
+      currency: "INR",
+      receipt: `receipt_order_${Date.now()}`,
+    };
 
-    res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    console.error('Error creating payment intent:', error);
-    res.status(500).send('Internal Server Error');
+    const order = await razorpayInstance.orders.create(options);
+    res.json({ success: true, order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: "Failed to create Razorpay order" });
   }
 };
-
-module.exports = { createPaymentIntent };

@@ -1,8 +1,8 @@
 // server/routes/stripeRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createPaymentIntent } = require('../controllers/paymentController');
+const { createRazorpayOrder } = require('../controllers/paymentController');
 
-router.post('/create-payment-intent', createPaymentIntent);
+router.post("/create-razorpay-order", createRazorpayOrder);
 
 module.exports = router;
