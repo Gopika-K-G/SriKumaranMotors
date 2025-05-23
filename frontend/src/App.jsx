@@ -17,6 +17,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminRoute from './components/AdminRoute';
 import { AuthProvider } from './context/AuthContext';
 import PaymentSuccess from './pages/PaymentSuccess';
+import UserDetails from './pages/UserDetails';
+import OrderDetails from './pages/OrderDetails';
+import StockManagement from './pages/StockManagement';
 
 function App() {
   return (
@@ -36,6 +39,10 @@ function App() {
           <Route path="/payment" element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route path="/payment-success" element={<PrivateRoute><PaymentSuccess /></PrivateRoute>} />
           <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UserDetails /></AdminRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><OrderDetails /></AdminRoute>} />
+          <Route path="/admin/stock" element={<AdminRoute><StockManagement /></AdminRoute>} />
         </Routes>
       </ScrollProvider>
     </AuthProvider>

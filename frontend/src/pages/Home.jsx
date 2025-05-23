@@ -5,24 +5,25 @@ import HeroSection from '../components/HeroSection';
 import About from './About';
 import Footer from '../components/Footer';
 
-
 const Home = () => {
   const { scrollTarget, setScrollTarget, setCurrentSection } = useScroll();
   const location = useLocation();
 
-  const aboutRef = useRef();
-  const heroRef = useRef();
+  const aboutRef = useRef(null);
+  const heroRef = useRef(null);
 
+  // Scroll to section on page load/navigation
   useEffect(() => {
     if (scrollTarget) {
       const element = document.getElementById(scrollTarget);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        setScrollTarget(null);
+        setScrollTarget(null); // Clear scroll target after scrolling
       }
     }
   }, [location, scrollTarget, setScrollTarget]);
 
+  // Update current section for highlight or tracking
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -53,12 +54,14 @@ const Home = () => {
 
   return (
     <>
-      <section ref={heroRef}>
+      <section id="home" ref={heroRef}>
         <HeroSection />
       </section>
+
       <section id="about" ref={aboutRef}>
         <About />
       </section>
+
       <Footer />
     </>
   );

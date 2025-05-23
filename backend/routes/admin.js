@@ -15,6 +15,38 @@ router.get('/dashboard', async (req, res) => {
   res.json({ message: 'Welcome, Admin', productCount });
 });
 
+router.get('/users', async (req, res) => {
+  const users = await User.find({}, '-password'); // exclude password
+  res.json(users);
+});
+
+// ✅ DELETE user by ID (admin only - already protected by verifyAdmin)
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ✅ PROMOTE user to admin (already protected by verifyAdmin)
+router.put('/users/promote/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.role = 'admin';
+    await user.save();
+
+    res.status(200).json({ message: 'User promoted to admin' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // 1. Users per month (group by createdAt)
 router.get('/stats/users', async (req, res) => {
   const pipeline = [

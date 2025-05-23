@@ -2,12 +2,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useScroll } from '../context/ScrollContext'; // ✅ import useScroll
 import "../styles/Navbar.css";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+  const { setScrollTarget } = useScroll(); // ✅ use setScrollTarget from ScrollContext
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -46,13 +48,27 @@ function Navbar() {
 
         {user && user.role === 'user' && (
           <>
-            <Link to="/"         className="nav-item page-link">Home</Link>
-            <Link to="/"         className="nav-item page-link">About</Link>
+            <Link to="/" className="nav-item page-link">Home</Link>
+            <span
+              className="nav-item page-link"
+              onClick={() => {
+                if (location.pathname === '/') {
+                  document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  setScrollTarget('about'); // ✅ set scroll target in context
+                  navigate('/');
+                }
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              About
+            </span>
+
             <Link to="/products" className="nav-item page-link">Products</Link>
-            <Link to="/cart"     className="nav-item page-link">Cart</Link>
+            <Link to="/cart" className="nav-item page-link">Cart</Link>
             <Link to="/favourites" className="nav-item page-link">Favourites</Link>
 
-            {/* Profile Dropdown (original design) */}
+            {/* Profile Dropdown */}
             <div
               className="nav-item no-hover-underline"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -110,13 +126,21 @@ function Navbar() {
 
         {user && user.role === 'admin' && (
           <>
-            <Link to="/admin/users"  className="nav-item page-link">User Details</Link>
+            <Link to="/admin/dashboard" className="nav-item page-link">Dashboard</Link>
+            <Link to="/admin/users" className="nav-item page-link">User Details</Link>
             <Link to="/admin/orders" className="nav-item page-link">Order Details</Link>
-            <Link to="/admin/stock"  className="nav-item page-link">Stock Management</Link>
+            <Link to="/admin/stock" className="nav-item page-link">Stock Management</Link>
             <button
               className="nav-item nav-logout"
               onClick={handleLogout}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#333', fontSize:'0.95rem', margin:'0 1rem' }}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#333',
+                fontSize: '0.95rem',
+                margin: '0 1rem',
+              }}
             >
               Logout
             </button>

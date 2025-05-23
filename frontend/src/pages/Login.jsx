@@ -9,6 +9,7 @@ function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -18,6 +19,14 @@ function Signin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address.');
+      return;
+    } else {
+      setEmailError('');
+    }
 
     try {
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
@@ -31,23 +40,21 @@ function Signin() {
       const data = await res.json();
 
       if (res.ok) {
-        login(data.token, data.user); // ✅ AuthContext login
+        login(data.token, data.user);
+        localStorage.setItem('userId', data.user.id);
 
-         localStorage.setItem('userId', data.user.id);
-        alert('Login successful!');
-
-        // ✅ Redirect based on user role
+        // Redirect based on role
         if (data.user.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
           navigate('/');
         }
       } else {
-        alert(data.message || 'Login failed');
+        setEmailError(data.message || 'Login failed');
       }
     } catch (err) {
       console.error('Login error:', err);
-      alert('Something went wrong. Please try again later.');
+      setEmailError('Something went wrong. Please try again later.');
     }
   };
 
@@ -72,6 +79,7 @@ function Signin() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {emailError && <p className="error-text">{emailError}</p>}
 
             <label>Password</label>
             <div className="password-field">

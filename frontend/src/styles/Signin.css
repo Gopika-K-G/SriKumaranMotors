@@ -92,4 +92,12 @@
   .signup-link:hover {
     text-decoration: underline;
   }
+
+  .error-text {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
   
